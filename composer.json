@@ -1,0 +1,19 @@
+{
+  "name": "altervision/avdb",
+  "description": "Database PDO class",
+  "type": "library",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "AlterVision",
+      "email": "info@altervision.ru"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "AlterVision\\AVDB\\": "src/"
+    }
+  }
+}
