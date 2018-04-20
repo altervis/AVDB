@@ -22,12 +22,6 @@ abstract class Connect
 	{
 		$class_name = 'AlterVision\\AVDB\\' . ucfirst(strtolower(DB_TYPE));
 
-		if (!class_exists($class_name))
-		{
-			trigger_error('Ошибка. Не найден класс "' . $class_name . '".', E_USER_ERROR);
-			exit;
-		}
-
 		return new $class_name();
 	}
 
