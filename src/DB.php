@@ -1,16 +1,17 @@
-<?
+<?php
 
 namespace AlterVision\AVDB;
 
+use PDO;
+
 abstract class DB
 {
-    private static $db_connect = NULL;
+    private static $db_connect = null;
 
     private static function get_connect()
     {
-        if (self::$db_connect == NULL)
-        {
-	        self::$db_connect = Connect::factory();
+        if (self::$db_connect == null) {
+            self::$db_connect = Connect::factory();
         }
         return self::$db_connect;
     }
@@ -20,7 +21,7 @@ abstract class DB
         return self::get_connect()->query($query, $fields);
     }
 
-    public static function select($query, $fields = array(), $fetch_style = \PDO::FETCH_ASSOC)
+    public static function select($query, $fields = array(), $fetch_style = PDO::FETCH_ASSOC)
     {
         return self::get_connect()->select($query, $fields, $fetch_style);
     }
@@ -30,7 +31,7 @@ abstract class DB
         return self::get_connect()->select_cell($query, $fields);
     }
 
-    public static function select_all($query, $fields = array(), $fetch_style = \PDO::FETCH_ASSOC)
+    public static function select_all($query, $fields = array(), $fetch_style = PDO::FETCH_ASSOC)
     {
         return self::get_connect()->select_all($query, $fields, $fetch_style);
     }
@@ -53,10 +54,5 @@ abstract class DB
     public static function last_insert_id()
     {
         return self::get_connect()->last_insert_id();
-    }
-
-    public static function create()
-    {
-        return self::get_connect()->create();
     }
 }
