@@ -12,7 +12,15 @@ abstract class Connect
     protected function __construct()
     {
         try {
-            $this->dbh = new PDO(DB_TYPE . ':host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+            $this->dbh = new PDO(
+                DB_TYPE .
+                ';charset=' . DB_CHARSET .
+                ':host=' . DB_HOST .
+                ';dbname=' . DB_NAME,
+                DB_USER,
+                DB_PASS,
+                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+            );
         } catch (PDOException $e) {
             die('<div style="text-align: center;">' . $e->getMessage() . '</div>');
         }
