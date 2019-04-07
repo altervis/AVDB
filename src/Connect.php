@@ -14,8 +14,8 @@ abstract class Connect
         try {
             $this->dbh = new PDO(
                 DB_TYPE .
-                ';charset=' . DB_CHARSET .
-                ':host=' . DB_HOST .
+                ':charset=' . DB_CHARSET .
+                ';host=' . DB_HOST .
                 ';dbname=' . DB_NAME,
                 DB_USER,
                 DB_PASS,
