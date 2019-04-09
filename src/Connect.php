@@ -72,7 +72,7 @@ abstract class Connect
         return $this->execute($query, $fields)->fetchColumn(0);
     }
 
-    public function insert($table, $fields = array())
+    public function insert($table, $fields = array(), $ignore = false)
     {
         $columns = array();
         $values  = array();
@@ -83,7 +83,7 @@ abstract class Connect
         $columns = join(", ", $columns);
         $values  = join(", ", $values);
 
-        $query = "INSERT INTO {$table} ( {$columns} ) VALUES ( {$values} )";
+        $query = "INSERT" . ($ignore ? " IGNORE " : " ") . "INTO {$table} ( {$columns} ) VALUES ( {$values} )";
 
         return $this->execute($query, $fields)->rowCount();
     }
