@@ -83,7 +83,7 @@ abstract class Connect
         $columns = join(", ", $columns);
         $values  = join(", ", $values);
 
-        $query = "INSERT" . ($ignore ? " IGNOREZ" : " ") . "INTO {$table} ( {$columns} ) VALUES ( {$values} )";
+        $query = "INSERT" . ($ignore ? " IGNORE" : " ") . "INTO {$table} ( {$columns} ) VALUES ( {$values} )";
 
         return $this->execute($query, $fields)->rowCount();
     }
