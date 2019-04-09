@@ -83,7 +83,7 @@ abstract class Connect
         $columns = join(", ", $columns);
         $values  = join(", ", $values);
 
-        $query = "INSERT" . ($ignore ? " IGNORE " : " ") . "INTO {$table} ( {$columns} ) VALUES ( {$values} )";
+        $query = "INSERT" . ($ignore ? " IGNOREZ" : " ") . "INTO {$table} ( {$columns} ) VALUES ( {$values} )";
 
         return $this->execute($query, $fields)->rowCount();
     }
@@ -103,7 +103,8 @@ abstract class Connect
         }
         $conds = join(" AND ", $conds);
 
-        $query = "UPDATE {$table} SET {$pairs}" . ($conds ? " WHERE " : " ") . $conds;
+        $query = /** @lang text */
+            "UPDATE {$table} SET {$pairs}" . ($conds ? " WHERE " : " ") . $conds;
 
         return $this->execute($query, $fields)->rowCount();
     }
@@ -118,7 +119,8 @@ abstract class Connect
         }
         $conds = join(" AND ", $conds);
 
-        $query = "DELETE FROM {$table}" . ($conds ? " WHERE " : " ") . $conds;
+        $query = /** @lang text */
+            "DELETE FROM {$table}" . ($conds ? " WHERE " : " ") . $conds;
 
         return $this->execute($query, $fields)->rowCount();
     }
