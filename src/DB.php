@@ -36,9 +36,9 @@ abstract class DB
         return self::get_connect()->select_all($query, $fields, $fetch_style);
     }
 
-    public static function insert($table, $fields = array())
+    public static function insert($table, $fields = array(), $ignore = false)
     {
-        return self::get_connect()->insert($table, $fields);
+        return self::get_connect()->insert($table, $fields, $ignore);
     }
 
     public static function update($table, $fields = array(), $where = array())
