@@ -2,40 +2,44 @@
 
 namespace AlterVision\AVDB;
 
-use PDO;
-use PDOException;
+use PDO, PDOException;
 
 abstract class Connect
 {
+    protected static $config;
     protected $dbh;
 
     protected function __construct()
     {
-        try {
+        try
+        {
             $this->dbh = new PDO(
-                DB_TYPE .
-                ':charset=' . DB_CHARSET .
-                ';host=' . DB_HOST .
-                ';dbname=' . DB_NAME,
-                DB_USER,
-                DB_PASS,
+                self::$config['type'] .
+                ':charset=' . self::$config['charset'] .
+                ';host=' . self::$config['host'] .
+                ';dbname=' . self::$config['name'],
+                self::$config['user'],
+                self::$config['pass'],
                 array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
             );
-        } catch (PDOException $e) {
+        } catch (PDOException $e)
+        {
             die('<div style="text-align: center;">' . $e->getMessage() . '</div>');
         }
     }
 
-    public static function factory()
+    public static function factory($config)
     {
-        $class_name = 'AlterVision\\AVDB\\' . ucfirst(strtolower(DB_TYPE));
+        self::$config = $config;
+        $class_name   = 'AlterVision\\AVDB\\' . ucfirst(strtolower(self::$config['type']));
 
         return new $class_name();
     }
 
     protected function execute($query, $fields = array())
     {
-        if (isset($GLOBALS['DB_DEBUG']) && $GLOBALS['DB_DEBUG']) {
+        if (isset(self::$config['debug']) && self::$config['debug'])
+        {
             print "$query<br/>\n";
             print_r($fields);
             print "<br/>\n";
@@ -43,7 +47,8 @@ abstract class Connect
 
         $sth = $this->dbh->prepare($query);
 
-        foreach ($fields as $name => $value) {
+        foreach ($fields as $name => $value)
+        {
             $sth->bindValue(":" . $name, $value);
         }
 
@@ -76,7 +81,8 @@ abstract class Connect
     {
         $columns = array();
         $values  = array();
-        foreach ($fields as $name => $value) {
+        foreach ($fields as $name => $value)
+        {
             $columns[] = "{$name}";
             $values[]  = ":$name";
         }
@@ -91,13 +97,15 @@ abstract class Connect
     public function update($table, $fields = array(), $where = array())
     {
         $pairs = array();
-        foreach ($fields as $name => $value) {
+        foreach ($fields as $name => $value)
+        {
             $pairs[] = "{$name} = :{$name}";
         }
         $pairs = join(", ", $pairs);
 
         $conds = array();
-        foreach ($where as $name => $value) {
+        foreach ($where as $name => $value)
+        {
             $conds[]                  = "{$name} = :conds_{$name}";
             $fields["conds_" . $name] = $value;
         }
@@ -113,7 +121,8 @@ abstract class Connect
     {
         $conds  = array();
         $fields = array();
-        foreach ($where as $name => $value) {
+        foreach ($where as $name => $value)
+        {
             $conds[]                  = "{$name} = :conds_{$name}";
             $fields["conds_" . $name] = $value;
         }

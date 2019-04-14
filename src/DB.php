@@ -6,12 +6,23 @@ use PDO;
 
 abstract class DB
 {
+    private static $config = [];
     private static $db_connect = null;
+
+    public static function setup($config)
+    {
+        self::$config     = $config;
+        self::$db_connect = Connect::factory(self::$config);
+    }
 
     private static function get_connect()
     {
-        if (self::$db_connect == null) {
-            self::$db_connect = Connect::factory();
+        if (self::$db_connect == null)
+        {
+            if (self::$config)
+            {
+                self::$db_connect = Connect::factory(self::$config);
+            }
         }
         return self::$db_connect;
     }
