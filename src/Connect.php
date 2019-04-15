@@ -20,7 +20,10 @@ abstract class Connect
                 ';dbname=' . self::$config['name'],
                 self::$config['user'],
                 self::$config['pass'],
-                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+                array(
+                    PDO::ATTR_ERRMODE          => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                )
             );
         } catch (PDOException $e)
         {
@@ -36,23 +39,74 @@ abstract class Connect
         return new $class_name();
     }
 
-    protected function execute($query, $fields = array())
+    protected function debug(&$sth)
     {
         if (isset(self::$config['debug']) && self::$config['debug'])
         {
-            print "$query<br/>\n";
-            print_r($fields);
-            print "<br/>\n";
+            ob_start();
+            $sth->debugDumpParams();
+            $dump = ob_get_clean();
+
+            $lines = explode("\n", $dump);
+            $lines = array_slice($lines, 0, 2);
+
+            $sql = preg_replace('/^Sent SQL: \[\d+\]/ ', '', $lines[1], -1, $count);
+
+            if (!$count)
+            {
+                $sql = preg_replace('/^SQL: \[\d+\]/ ', '', $lines[0], -1, $count);
+            }
+
+            $sql = trim($sql);
+
+            if ($count)
+            {
+                echo '<div style="border-bottom: 1px solid red; padding: 0 5px">' . "\n";
+                echo \SqlFormatter::format($sql);
+                echo '</div>' . "\n";
+            }
         }
+    }
+
+    protected function bind_values($query, $fields = array())
+    {
+        foreach ($fields as $name => $value)
+        {
+            if (!preg_match('/^(int|float|sql)\:\/\/(.*)/', $value, $matches))
+            {
+                $value = $this->dbh->quote($value);
+            }
+            else
+            {
+                switch ($matches[1])
+                {
+                    case 'int':
+                        $value = intval($matches[2]);
+                        break;
+                    case 'float':
+                        $value = floatval($matches[2]);
+                        break;
+                    case 'sql':
+                        $value = $matches[2];
+                        break;
+                }
+            }
+
+            $query = str_replace(":$name", $value, $query);
+        }
+
+        return $query;
+    }
+
+    protected function execute($query, $fields = array())
+    {
+        $query = self::bind_values($query, $fields);
 
         $sth = $this->dbh->prepare($query);
 
-        foreach ($fields as $name => $value)
-        {
-            $sth->bindValue(":" . $name, $value);
-        }
-
         $sth->execute();
+
+        $this->debug($sth);
 
         return $sth;
     }
